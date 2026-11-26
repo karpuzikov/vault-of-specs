@@ -1,0 +1,177 @@
+[
+ {
+  "type": "gtin",
+  "name": "GTIN (EAN/UPC/JAN)",
+  "entityTypes": [
+   "variant"
+  ],
+  "pattern": "^(\\d{8}|\\d{12}|\\d{13}|\\d{14})$",
+  "checksum": "gtin"
+ },
+ {
+  "type": "mpn",
+  "name": "Manufacturer part number",
+  "entityTypes": [
+   "variant",
+   "design"
+  ],
+  "pattern": null,
+  "checksum": null
+ },
+ {
+  "type": "catalog number",
+  "name": "Catalog number",
+  "entityTypes": [
+   "variant"
+  ],
+  "pattern": null,
+  "checksum": null
+ },
+ {
+  "type": "sku",
+  "name": "Retailer SKU",
+  "entityTypes": [
+   "variant"
+  ],
+  "pattern": null,
+  "checksum": null
+ },
+ {
+  "type": "model number",
+  "name": "Model number",
+  "entityTypes": [
+   "model",
+   "design"
+  ],
+  "pattern": null,
+  "checksum": null
+ },
+ {
+  "type": "regulatory model",
+  "name": "Regulatory model / FCC ID",
+  "entityTypes": [
+   "design"
+  ],
+  "pattern": null,
+  "checksum": null
+ },
+ {
+  "type": "machine type",
+  "name": "Lenovo machine type",
+  "entityTypes": [
+   "model"
+  ],
+  "pattern": "^[0-9A-Z]{4}$",
+  "checksum": null
+ },
+ {
+  "type": "asin",
+  "name": "Amazon ASIN",
+  "entityTypes": [
+   "variant"
+  ],
+  "pattern": "^[0-9A-Z]{10}$",
+  "checksum": null
+ },
+ {
+  "type": "imei tac",
+  "name": "IMEI type allocation code",
+  "entityTypes": [
+   "variant"
+  ],
+  "pattern": "^\\d{8}$",
+  "checksum": null
+ },
+ {
+  "type": "pci id",
+  "name": "PCI vendor:device",
+  "entityTypes": [
+   "design"
+  ],
+  "pattern": "^[0-9a-f]{4}:[0-9a-f]{4}$",
+  "checksum": null
+ },
+ {
+  "type": "usb id",
+  "name": "USB VID:PID",
+  "entityTypes": [
+   "design"
+  ],
+  "pattern": "^[0-9a-f]{4}:[0-9a-f]{4}$",
+  "checksum": null
+ },
+ {
+  "type": "hs code",
+  "name": "HS customs code",
+  "entityTypes": [
+   "category",
+   "design"
+  ],
+  "pattern": "^\\d{4,10}$",
+  "checksum": null
+ },
+ {
+  "type": "cas number",
+  "name": "CAS registry number",
+  "entityTypes": [
+   "material"
+  ],
+  "pattern": "^\\d{2,7}-\\d{2}-\\d$",
+  "checksum": "cas"
+ },
+ {
+  "type": "colour index",
+  "name": "Colour Index",
+  "entityTypes": [
+   "material"
+  ],
+  "pattern": null,
+  "checksum": null
+ },
+ {
+  "type": "gln",
+  "name": "GS1 location number",
+  "entityTypes": [
+   "company",
+   "facility"
+  ],
+  "pattern": "^\\d{13}$",
+  "checksum": "gtin"
+ },
+ {
+  "type": "gs1 prefix",
+  "name": "GS1 company prefix",
+  "entityTypes": [
+   "company"
+  ],
+  "pattern": "^\\d{6,12}$",
+  "checksum": null
+ },
+ {
+  "type": "duns",
+  "name": "D-U-N-S number",
+  "entityTypes": [
+   "company"
+  ],
+  "pattern": "^\\d{9}$",
+  "checksum": null
+ },
+ {
+  "type": "lei",
+  "name": "Legal entity identifier",
+  "entityTypes": [
+   "company"
+  ],
+  "pattern": "^[0-9A-Z]{18}\\d{2}$",
+  "checksum": null
+ },
+ {
+  "type": "iso 3166",
+  "name": "ISO 3166 code",
+  "entityTypes": [
+   "area"
+  ],
+  "pattern": "^[A-Z]{2}(-[0-9A-Z]{1,3})?$",
+  "checksum": null
+ }
+]

@@ -12,7 +12,7 @@ Shaped like MusicBrainz so it can later be imported into a renamed `musicbrainz-
 | Product line | Series | `product-lines.json` | Ordered family of models (Hoco J series, GeForce RTX 40) |
 | Design | Work | `designs.json` | The engineered thing itself; rebadged products share one design. Parts are designs too |
 | Model | Release group | `models.json` | A brand's named product (Hoco J94 Overlord) |
-| Variant | Release | `variants.json` | A purchasable edition: color, region, part number, barcode, release date, packaging |
+| Variant | Release | `variants.json` | A purchasable edition or configuration (one Lenovo MTM, one color/region SKU): its own identifiers, release date, packaging |
 | Material | Instrument | `materials.json` | Fabric, alloy, plastic, dye; hierarchical (cotton → organic cotton) |
 | Category | Genre | `categories.json` | Power banks, GPUs, scarves; hierarchical |
 | Area | Area | `areas.json` | Country, region, city; hierarchical |
@@ -26,11 +26,49 @@ Every entity has `id` (UUID, never reused), `name`, `disambiguation` (tells same
 - Product line: `ordering` (`manual` or `releaseDate`)
 - Design: `categoryId`, `specs` (see below)
 - Model: `categoryId`, `specs` (model-level overrides of its design's specs), `catalogKey` (its key in the OLX Model Tags catalog)
-- Variant: `modelId`, `color`, `region` (`areaId`), `partNumber`, `barcode`, `releaseDate` (YYYY, YYYY-MM or YYYY-MM-DD), `packaging`, `status` (official, discontinued, bootleg), `specs`
+- Variant: `modelId`, `color`, `areaId` (market), `releaseDate` (YYYY, YYYY-MM or YYYY-MM-DD), `packaging`, `status` (official, discontinued, counterfeit), `specs`. Part numbers, barcodes etc. are in `identifiers.json`
 - Material: `parentId`, `specs`
 - Category, Area: `parentId`, `type`
 
 `specs`: `[{ "name": "Capacity", "value": "75000mAh", "sourceUrlId": "<url id>" }]`. Names are the unified names; the raw source wording stays in `raw-specs.json`.
+
+## Identifiers (`identifiers.json`)
+
+MusicBrainz keeps barcode on the release, catalog number per label, ISRC on recordings, ISWC on works, IPI/ISNI on artists. Products have many more, and one entity often has several of the same type (one barcode per market), so they live in one table:
+
+```json
+{ "id": "<uuid>", "entity": { "type": "variant", "id": "<uuid>" }, "type": "gtin", "value": "6931474795755",
+  "issuerId": null, "areaId": null, "sourceUrlId": "<url id>" }
+```
+
+- `issuerId`: the company that assigned it (a retailer's SKU, a distributor's catalog number), like MusicBrainz's release label + catalog number pair
+- `areaId`: the market it applies to, when it differs by region
+
+Identifier types (`identifier-types.json`: `type`, `name`, `entityTypes`, `pattern`, `checksum`):
+
+| Type | Applies to | Example |
+| --- | --- | --- |
+| gtin | variant | GTIN-8/12/13/14 (EAN, UPC, JAN); check digit verified |
+| mpn | variant, design | Manufacturer part number |
+| catalog number | variant | Number in a brand's or distributor's catalog (with `issuerId`) |
+| sku | variant | A retailer's own code (with `issuerId`) |
+| model number | model, design | Number printed on the product (Hoco J94, Apple A2337) |
+| regulatory model | design | FCC ID, Apple "Axxxx", CCC/SRRC codes |
+| machine type | model | Lenovo 4-character MT (21YC); configs are variants with their MTM as `mpn` |
+| asin | variant | Amazon ID (with `areaId`) |
+| imei tac | variant | Phone type allocation code |
+| pci id | design | Vendor:device for chips and cards |
+| usb id | design | VID:PID |
+| hs code | category, design | Customs tariff code |
+| cas number | material | Chemicals and dyes |
+| colour index | material | Dye/pigment code (C.I. 61570) |
+| gln | company, facility | GS1 location number |
+| gs1 prefix | company | Company prefix in its barcodes |
+| duns | company | D-U-N-S number |
+| lei | company | Legal entity identifier |
+| iso 3166 | area | Country/region code |
+
+New types are added to `identifier-types.json`, never hard-coded.
 
 ## Relationships (`relationships.json`)
 
@@ -74,7 +112,7 @@ Edits are git commits with a fixed message format, one edit per commit: `Add mod
 
 ## Migration to a musicbrainz-server fork
 
-Each file maps to one table set (Company → `label`, Brand → `artist`, Design → `work`, Model → `release_group`, Variant → `release`, Material → `instrument`, relationships → `l_<type0>_<type1>` + `link` + `link_attribute`), UUIDs become `gid`. Specs and the new entity types need new tables in the fork.
+Each file maps to one table set (identifiers → new `<entity>_identifier` tables, gtin → `release.barcode`, catalog number → `release_label`; Company → `label`, Brand → `artist`, Design → `work`, Model → `release_group`, Variant → `release`, Material → `instrument`, relationships → `l_<type0>_<type1>` + `link` + `link_attribute`), UUIDs become `gid`. Specs and the new entity types need new tables in the fork.
 
 ## Current data
 

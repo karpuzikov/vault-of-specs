@@ -77,7 +77,7 @@ writeTable('urls.json', [...urls.values()].sort((a, b) => a.url.localeCompare(b.
 writeTable('relationships.json', relationships.sort((a, b) => a.id.localeCompare(b.id)));
 writeTable('raw-specs.json', rawSpecs.sort((a, b) => a.urlId.localeCompare(b.urlId)));
 // Not in the catalog: edited by hand, only created here when missing.
-for (const fileName of ['companies.json', 'facilities.json', 'product-lines.json', 'variants.json', 'materials.json', 'areas.json', 'aliases.json', 'redirects.json', 'tags.json']) {
+for (const fileName of ['companies.json', 'facilities.json', 'product-lines.json', 'variants.json', 'materials.json', 'areas.json', 'aliases.json', 'redirects.json', 'tags.json', 'identifiers.json']) {
   if (!fs.existsSync(`data/${fileName}`)) writeTable(fileName, []);
 }
 console.log(`${brands.size} brands, ${models.length} models, ${designs.length} designs, ${urls.size} URLs, ${relationships.length} relationships, ${rawSpecs.length} raw spec pages`);
