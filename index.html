@@ -57,8 +57,7 @@ details .table-card{padding:0}
 <main id="page" aria-live="polite"><p class="empty">Loading…</p></main>
 <footer class="under-construction">Under construction ⚠️ Read-only view of the OLX Model Tags catalog.</footer>
 <script>
-// Vault Of Specs: read-only browser for the OLX Model Tags catalog (the userscript writes it; this page only reads the public files).
-const VAULT_OF_SPECS_DATA_URL = 'https://raw.githubusercontent.com/karpuzikov/userscripts/main/browser-tools/olx-model-tags/';
+// Vault Of Specs: read-only browser over data/*.json (see SCHEMA.md).
 const vaultOfSpecsPage = document.getElementById('page');
 const vaultOfSpecsSearchInput = document.getElementById('search');
 let vaultOfSpecsData = null;
@@ -70,32 +69,25 @@ function createElement(tagName, attributes = {}, ...children) {
   return element;
 }
 
-const brandNameOf = (product) => product.name.split(' ')[0];
-const brandKeyOf = (brandName) => brandName.toLowerCase();
-const productHref = (product) => `#/product/${encodeURIComponent(product.key)}`;
-const brandHref = (brandName) => `#/brand/${encodeURIComponent(brandKeyOf(brandName))}`;
+const brandNameOf = (product) => product.brand.name;
+const productHref = (product) => `#/product/${product.id}`;
+const brandHref = (brand) => `#/brand/${brand.id}`;
 const categoryHref = (category) => `#/category/${encodeURIComponent(category)}`;
 const isNumericValue = (value) => /^[~≈]?\d/.test(value);
 
-function splitTagIntoSpec(tag) {
-  const namedTag = tag.match(/^([^\d:][^:]{0,30}):\s+(.+)$/); // same rule as the userscript
-  return namedTag ? { name: namedTag[1].trim(), value: namedTag[2].trim() } : null;
-}
-
 async function loadVaultOfSpecsData() {
   const fetchJson = async (fileName) => {
-    const response = await fetch(VAULT_OF_SPECS_DATA_URL + fileName);
+    const response = await fetch(`data/${fileName}`);
     if (!response.ok) throw new Error(`${fileName}: HTTP ${response.status}`);
     return response.json();
   };
-  const [catalog, rawSpecs] = await Promise.all([fetchJson('olx-model-tags-catalog.json'), fetchJson('olx-model-tags-rawspecs.json')]);
-  const products = Object.entries(catalog.models).map(([key, model]) => ({
-    key, name: model.name, category: model.group || 'Uncategorized',
-    specs: model.tags.map(splitTagIntoSpec).filter(Boolean), sources: model.sources || {},
-  })).sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
-  const shopPagesByProductName = {};
-  for (const [pageKey, modelName] of Object.entries(catalog.productLinks || {})) (shopPagesByProductName[modelName.toLowerCase()] ||= []).push(`https://${pageKey}/`);
-  return { products, rawSpecs, shopPagesByProductName };
+  const [brands, models] = await Promise.all([fetchJson('brands.json'), fetchJson('models.json')]);
+  const brandsById = new Map(brands.map((brand) => [brand.id, brand]));
+  const products = models.map((model) => ({
+    ...model, brand: brandsById.get(model.brandId), category: model.category || 'Uncategorized',
+    specs: Object.entries(model.specs).map(([name, value]) => ({ name, value })),
+  }));
+  return { products };
 }
 
 function createSpecTable(specs) {
@@ -135,12 +127,12 @@ function renderHomePage() {
     createElement('h2', {}, 'Categories'),
     createCountGrid(countBy(products, (product) => product.category).map(([category, count]) => [category, categoryHref(category), count])),
     createElement('h2', {}, 'Brands'),
-    createCountGrid(countBy(products, brandNameOf).map(([brandName, count]) => [brandName, brandHref(brandName), count])),
+    createCountGrid(countBy(products, (product) => product.brand).map(([brand, count]) => [brand.name, brandHref(brand), count])),
   ];
 }
 
-function renderBrandPage(brandKey) {
-  const products = vaultOfSpecsData.products.filter((product) => brandKeyOf(brandNameOf(product)) === brandKey);
+function renderBrandPage(brandId) {
+  const products = vaultOfSpecsData.products.filter((product) => product.brand.id === brandId);
   if (!products.length) return [createElement('p', { class: 'error' }, 'Brand not found.')];
   return [createElement('h1', {}, brandNameOf(products[0])), createElement('div', { class: 'meta' }, `${products.length} products`), createElement('h2', {}, 'Products'), createProductTable(products)];
 }
@@ -156,29 +148,28 @@ function renderSearchPage(query) {
   return [createElement('h1', {}, `Search: ${query}`), createElement('div', { class: 'meta' }, `${products.length} products`), createElement('h2', {}, 'Products'), createProductTable(products)];
 }
 
-function renderProductPage(productKey) {
-  const product = vaultOfSpecsData.products.find((candidate) => candidate.key === productKey);
+function renderProductPage(productId) {
+  const product = vaultOfSpecsData.products.find((candidate) => candidate.id === productId);
   if (!product) return [createElement('p', { class: 'error' }, 'Product not found.')];
   const sections = [
     createElement('h1', {}, product.name),
-    createElement('div', { class: 'meta' }, createElement('a', { href: brandHref(brandNameOf(product)) }, brandNameOf(product)), '·', createElement('a', { href: categoryHref(product.category) }, product.category)),
+    createElement('div', { class: 'meta' }, createElement('a', { href: brandHref(product.brand) }, brandNameOf(product)), '·', createElement('a', { href: categoryHref(product.category) }, product.category)),
     createElement('h2', {}, 'Specs'),
     product.specs.length ? createSpecTable(product.specs) : createElement('p', { class: 'empty' }, 'No specs yet.'),
   ];
-  const sourceEntries = Object.entries(product.sources);
+  const sourceEntries = product.sources.map(({ source, url }) => [source, url]);
   if (sourceEntries.length) {
     sections.push(createElement('h2', {}, 'Sources'), createElement('div', { class: 'table-card' }, createElement('table', {}, createElement('tbody', {},
       ...sourceEntries.map(([source, url]) => createElement('tr', {}, createElement('td', { class: 'spec-name' }, source), createElement('td', {}, createElement('a', { href: url, target: '_blank', rel: 'noopener noreferrer' }, url))))))));
   }
-  const shopPages = vaultOfSpecsData.shopPagesByProductName[product.name.toLowerCase()] || [];
+  const shopPages = product.shopPages;
   if (shopPages.length) {
     sections.push(createElement('h2', {}, 'Shop pages'), createElement('div', { class: 'table-card' }, createElement('table', {}, createElement('tbody', {},
       ...shopPages.map((url) => createElement('tr', {}, createElement('td', {}, createElement('a', { href: url, target: '_blank', rel: 'noopener noreferrer' }, url))))))));
   }
   // Specs exactly as each source page lists them (kept raw so labels can be unified later).
-  for (const [url, page] of Object.entries(vaultOfSpecsData.rawSpecs)) {
-    if (!url.startsWith('http') || page.model?.toLowerCase() !== product.name.toLowerCase()) continue;
-    const specs = Object.entries(page.specs || {}).map(([name, value]) => ({ name, value: String(value) }));
+  for (const { url, specs: rawSpecs } of product.rawSpecs) {
+    const specs = Object.entries(rawSpecs || {}).map(([name, value]) => ({ name, value: String(value) }));
     sections.push(createElement('details', {}, createElement('summary', {}, `Raw specs from ${new URL(url).hostname}`), createSpecTable(specs)));
   }
   return sections;

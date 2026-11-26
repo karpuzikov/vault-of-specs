@@ -1,0 +1,92 @@
+[
+ {
+  "id": "2fafa1be-63c1-5032-b6a7-a0f891e14628",
+  "name": "Apple",
+  "manufacturerId": null
+ },
+ {
+  "id": "14814db0-b18d-5f82-b97b-689bcae60d89",
+  "name": "Dell",
+  "manufacturerId": null
+ },
+ {
+  "id": "c86075d3-2505-532e-bfb4-536e51416070",
+  "name": "Google",
+  "manufacturerId": null
+ },
+ {
+  "id": "6e8682ef-0eba-5da5-81ae-3c3bf2f926e8",
+  "name": "Hoco",
+  "manufacturerId": null
+ },
+ {
+  "id": "c2b81764-4396-59ee-a379-3f5ec5a1b8ed",
+  "name": "Honor",
+  "manufacturerId": null
+ },
+ {
+  "id": "0eb8cc2a-ea7c-5a47-af04-54c3e1032638",
+  "name": "HP",
+  "manufacturerId": null
+ },
+ {
+  "id": "645c48c9-9eac-57da-8df7-a47c16c9530a",
+  "name": "Huawei",
+  "manufacturerId": null
+ },
+ {
+  "id": "fdcb6280-cb02-5746-b02f-4782409a4018",
+  "name": "iconBIT",
+  "manufacturerId": null
+ },
+ {
+  "id": "df46674f-8ce1-5762-a5e9-676815ce9916",
+  "name": "Motorola",
+  "manufacturerId": null
+ },
+ {
+  "id": "7ff38cf0-c3a4-5ca5-ad39-814b77f36317",
+  "name": "NEC",
+  "manufacturerId": null
+ },
+ {
+  "id": "7ca21183-af60-53e8-b989-879aac9f39f1",
+  "name": "Oppo",
+  "manufacturerId": null
+ },
+ {
+  "id": "3fe11e23-1e87-547a-b9ff-4817c5c30059",
+  "name": "Panasonic",
+  "manufacturerId": null
+ },
+ {
+  "id": "1af2223c-9081-5227-9445-97e89e32eb9e",
+  "name": "REMAX",
+  "manufacturerId": null
+ },
+ {
+  "id": "2ac6869c-402b-5df5-b6f1-165eb172cd55",
+  "name": "Samsung",
+  "manufacturerId": null
+ },
+ {
+  "id": "95e5b7e7-6d20-5121-99b9-f8e07a42a6ab",
+  "name": "Sony",
+  "manufacturerId": null
+ },
+ {
+  "id": "26d90a4a-ec57-516b-bb91-f63e99d5c3ec",
+  "name": "Tecno",
+  "manufacturerId": null
+ },
+ {
+  "id": "d2c0d818-c690-5b89-b322-fcb2845da460",
+  "name": "Vivo",
+  "manufacturerId": null
+ },
+ {
+  "id": "7416e5d1-248b-5115-b2ba-079503f74088",
+  "name": "Xiaomi",
+  "manufacturerId": null
+ }
+]
