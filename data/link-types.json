@@ -1,0 +1,163 @@
+[
+ {
+  "type": "owns",
+  "entity0Types": [
+   "company"
+  ],
+  "entity1Types": [
+   "brand",
+   "company",
+   "facility"
+  ],
+  "attributes": []
+ },
+ {
+  "type": "operates",
+  "entity0Types": [
+   "company"
+  ],
+  "entity1Types": [
+   "facility"
+  ],
+  "attributes": []
+ },
+ {
+  "type": "manufactures for",
+  "entity0Types": [
+   "company"
+  ],
+  "entity1Types": [
+   "brand"
+  ],
+  "attributes": []
+ },
+ {
+  "type": "produces",
+  "entity0Types": [
+   "facility"
+  ],
+  "entity1Types": [
+   "model",
+   "variant",
+   "design"
+  ],
+  "attributes": []
+ },
+ {
+  "type": "sells",
+  "entity0Types": [
+   "brand"
+  ],
+  "entity1Types": [
+   "model"
+  ],
+  "attributes": []
+ },
+ {
+  "type": "based on",
+  "entity0Types": [
+   "model"
+  ],
+  "entity1Types": [
+   "design"
+  ],
+  "attributes": [
+   "rebadge"
+  ]
+ },
+ {
+  "type": "part of",
+  "entity0Types": [
+   "product line"
+  ],
+  "entity1Types": [
+   "model"
+  ],
+  "attributes": [
+   "number"
+  ]
+ },
+ {
+  "type": "contains",
+  "entity0Types": [
+   "design"
+  ],
+  "entity1Types": [
+   "design"
+  ],
+  "attributes": [
+   "quantity",
+   "role"
+  ]
+ },
+ {
+  "type": "made of",
+  "entity0Types": [
+   "design"
+  ],
+  "entity1Types": [
+   "material"
+  ],
+  "attributes": [
+   "share",
+   "role"
+  ]
+ },
+ {
+  "type": "treated with",
+  "entity0Types": [
+   "material"
+  ],
+  "entity1Types": [
+   "material"
+  ],
+  "attributes": [
+   "role"
+  ]
+ },
+ {
+  "type": "originates from",
+  "entity0Types": [
+   "material",
+   "company",
+   "facility"
+  ],
+  "entity1Types": [
+   "area"
+  ],
+  "attributes": []
+ },
+ {
+  "type": "successor of",
+  "entity0Types": [
+   "model",
+   "company"
+  ],
+  "entity1Types": [
+   "model",
+   "company"
+  ],
+  "attributes": []
+ },
+ {
+  "type": "has URL",
+  "entity0Types": [
+   "company",
+   "facility",
+   "brand",
+   "product line",
+   "design",
+   "model",
+   "variant",
+   "material",
+   "category",
+   "area"
+  ],
+  "entity1Types": [
+   "url"
+  ],
+  "attributes": [
+   "role"
+  ]
+ }
+]

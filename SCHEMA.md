@@ -25,7 +25,7 @@ Every entity has `id` (UUID, never reused), `name`, `disambiguation` (tells same
 - Brand: `areaId`, `beginDate`, `endDate`
 - Product line: `ordering` (`manual` or `releaseDate`)
 - Design: `categoryId`, `specs` (see below)
-- Model: `categoryId`, `specs` (model-level overrides of its design's specs)
+- Model: `categoryId`, `specs` (model-level overrides of its design's specs), `catalogKey` (its key in the OLX Model Tags catalog)
 - Variant: `modelId`, `color`, `region` (`areaId`), `partNumber`, `barcode`, `releaseDate` (YYYY, YYYY-MM or YYYY-MM-DD), `packaging`, `status` (official, discontinued, bootleg), `specs`
 - Material: `parentId`, `specs`
 - Category, Area: `parentId`, `type`
@@ -78,4 +78,4 @@ Each file maps to one table set (Company → `label`, Brand → `artist`, Design
 
 ## Current data
 
-`data/brands.json` and `data/models.json` are still in the first, flat format (specs, sources and raw specs inside each model), generated from the OLX Model Tags catalog by `scripts/convert-olx-model-tags-catalog.cjs`. They move to this schema when the converter is updated: each catalog model becomes a Model, a Design (`based on`) and its URLs.
+Generated from the OLX Model Tags catalog by `scripts/convert-olx-model-tags-catalog.cjs` (brands, categories, designs, models, urls, relationships, raw-specs): each catalog model becomes a Model sold by its Brand and based on its own Design, which holds the specs and links to the spec source pages. The other tables are edited by hand.

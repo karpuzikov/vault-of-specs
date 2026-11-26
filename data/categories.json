@@ -1,0 +1,58 @@
+[
+ {
+  "id": "ddecb61f-9f3e-56f9-940d-c47a5b0bc675",
+  "name": "Cameras",
+  "disambiguation": "",
+  "annotation": "",
+  "parentId": null,
+  "type": null
+ },
+ {
+  "id": "f76feb44-f7ba-5493-9038-37c0c203cf71",
+  "name": "Monitors",
+  "disambiguation": "",
+  "annotation": "",
+  "parentId": null,
+  "type": null
+ },
+ {
+  "id": "10d6546c-9400-5312-8888-c58d9a53227d",
+  "name": "Portable DVD",
+  "disambiguation": "",
+  "annotation": "",
+  "parentId": null,
+  "type": null
+ },
+ {
+  "id": "e75425dd-e585-5f49-89bb-532d96c3ad60",
+  "name": "Power banks",
+  "disambiguation": "",
+  "annotation": "",
+  "parentId": null,
+  "type": null
+ },
+ {
+  "id": "d4d5a4ea-e0c1-5558-a835-cd6a7fe0e3da",
+  "name": "Smartphones",
+  "disambiguation": "",
+  "annotation": "",
+  "parentId": null,
+  "type": null
+ },
+ {
+  "id": "a3376684-7101-506e-8d62-987470c4dd19",
+  "name": "TV box",
+  "disambiguation": "",
+  "annotation": "",
+  "parentId": null,
+  "type": null
+ },
+ {
+  "id": "1f9e3fec-d328-5075-82b7-b2d590d7a121",
+  "name": "Uncategorized",
+  "disambiguation": "",
+  "annotation": "",
+  "parentId": null,
+  "type": null
+ }
+]

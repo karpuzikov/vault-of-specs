@@ -75,18 +75,37 @@ const brandHref = (brand) => `#/brand/${brand.id}`;
 const categoryHref = (category) => `#/category/${encodeURIComponent(category)}`;
 const isNumericValue = (value) => /^[~≈]?\d/.test(value);
 
+// Tables are joined here into one record per model (see SCHEMA.md): brand via "sells", design via "based on", URLs via "has URL".
 async function loadVaultOfSpecsData() {
   const fetchJson = async (fileName) => {
     const response = await fetch(`data/${fileName}`);
     if (!response.ok) throw new Error(`${fileName}: HTTP ${response.status}`);
     return response.json();
   };
-  const [brands, models] = await Promise.all([fetchJson('brands.json'), fetchJson('models.json')]);
-  const brandsById = new Map(brands.map((brand) => [brand.id, brand]));
-  const products = models.map((model) => ({
-    ...model, brand: brandsById.get(model.brandId), category: model.category || 'Uncategorized',
-    specs: Object.entries(model.specs).map(([name, value]) => ({ name, value })),
-  }));
+  const fileNames = ['brands.json', 'categories.json', 'designs.json', 'models.json', 'urls.json', 'relationships.json', 'raw-specs.json'];
+  const [brands, categories, designs, models, urls, relationships, rawSpecs] = await Promise.all(fileNames.map(fetchJson));
+  const byId = (records) => new Map(records.map((record) => [record.id, record]));
+  const brandsById = byId(brands), categoriesById = byId(categories), designsById = byId(designs), urlsById = byId(urls);
+  const linkedIds = (type, entityId, attributeFilter = () => true) => relationships
+    .filter((relationship) => relationship.type === type && relationship.entity0.id === entityId && attributeFilter(relationship.attributes))
+    .map((relationship) => relationship.entity1.id);
+  const modelIdsByDesignId = new Map();
+  for (const relationship of relationships) if (relationship.type === 'based on') modelIdsByDesignId.set(relationship.entity1.id, [...(modelIdsByDesignId.get(relationship.entity1.id) || []), relationship.entity0.id]);
+  const brandIdByModelId = new Map(relationships.filter((relationship) => relationship.type === 'sells').map((relationship) => [relationship.entity1.id, relationship.entity0.id]));
+  const products = models.map((model) => {
+    const design = designsById.get(linkedIds('based on', model.id)[0]);
+    const modelSpecNames = new Set(model.specs.map((spec) => spec.name));
+    return {
+      ...model, design,
+      brand: brandsById.get(brandIdByModelId.get(model.id)),
+      category: categoriesById.get(model.categoryId)?.name || 'Uncategorized',
+      specs: [...model.specs, ...(design?.specs || []).filter((spec) => !modelSpecNames.has(spec.name))],
+      sources: design ? linkedIds('has URL', design.id, (attributes) => attributes.role === 'spec source').map((urlId) => urlsById.get(urlId).url) : [],
+      shopPages: linkedIds('has URL', model.id, (attributes) => attributes.role === 'shop page').map((urlId) => urlsById.get(urlId).url),
+      rawSpecs: design ? rawSpecs.filter((page) => page.entity.id === design.id).map((page) => ({ url: urlsById.get(page.urlId).url, specs: page.specs })) : [],
+      otherModelIdsOfDesign: design ? (modelIdsByDesignId.get(design.id) || []).filter((modelId) => modelId !== model.id) : [],
+    };
+  });
   return { products };
 }
 
@@ -157,7 +176,9 @@ function renderProductPage(productId) {
     createElement('h2', {}, 'Specs'),
     product.specs.length ? createSpecTable(product.specs) : createElement('p', { class: 'empty' }, 'No specs yet.'),
   ];
-  const sourceEntries = product.sources.map(({ source, url }) => [source, url]);
+  const otherModels = product.otherModelIdsOfDesign.map((modelId) => vaultOfSpecsData.products.find((candidate) => candidate.id === modelId));
+  if (otherModels.length) sections.push(createElement('h2', {}, 'Same design, sold as'), createProductTable(otherModels));
+  const sourceEntries = product.sources.map((url) => [new URL(url).hostname, url]);
   if (sourceEntries.length) {
     sections.push(createElement('h2', {}, 'Sources'), createElement('div', { class: 'table-card' }, createElement('table', {}, createElement('tbody', {},
       ...sourceEntries.map(([source, url]) => createElement('tr', {}, createElement('td', { class: 'spec-name' }, source), createElement('td', {}, createElement('a', { href: url, target: '_blank', rel: 'noopener noreferrer' }, url))))))));
