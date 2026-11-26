@@ -82,7 +82,7 @@ function splitTagIntoSpec(tag) {
   return namedTag ? { name: namedTag[1].trim(), value: namedTag[2].trim() } : null;
 }
 
-async function loadVault Of SpecsData() {
+async function loadVaultOfSpecsData() {
   const fetchJson = async (fileName) => {
     const response = await fetch(VAULT_OF_SPECS_DATA_URL + fileName);
     if (!response.ok) throw new Error(`${fileName}: HTTP ${response.status}`);
@@ -202,7 +202,7 @@ vaultOfSpecsSearchInput.addEventListener('input', () => {
 });
 window.addEventListener('hashchange', renderRoute);
 
-loadVault Of SpecsData()
+loadVaultOfSpecsData()
   .then((data) => { vaultOfSpecsData = data; renderRoute(); })
   .catch((error) => vaultOfSpecsPage.replaceChildren(createElement('p', { class: 'error' }, `Could not load the catalog: ${error.message}`)));
 </script>
